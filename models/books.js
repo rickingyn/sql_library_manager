@@ -6,7 +6,8 @@ module.exports = (sequelize) => {
     class Book extends Sequelize.Model { }
     Book.init({
         title: {
-            type: sequelize.STRING,
+            type: Sequelize.STRING,
+            allowNull: false,
             validate: {
                 notNull: {
                     msg: "Please enter a value for 'title'"
@@ -17,7 +18,8 @@ module.exports = (sequelize) => {
             }
         },
         author: {
-            type: sequelize.STRING,
+            type: Sequelize.STRING,
+            allowNull: false,
             validate: {
                 notNull: {
                     msg: "Please enter a value for 'author'"
