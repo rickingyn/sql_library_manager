@@ -1,3 +1,29 @@
-body
-    h1 Books
-    button Create New Book
+//- boilerplate markup
+extends layout.pug
+
+block content
+  body
+    h1 Books 
+    //- link to form GET route
+    a(class='button' href='/books/new') Create New Book
+    br
+    br
+    table
+        thead
+            tr
+                th Title
+                th Author
+                th Genre
+                th Year
+        tbody   
+            each book in books
+                tr
+                    td  
+                        //- link to book detail GET route with book id
+                        a(href=`/books/${book.id}`) #{ book.title }
+                    td #{ book.author }
+                    td #{ book.genre }
+                    td #{ book.year }
+
+
+                
