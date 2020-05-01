@@ -28,7 +28,7 @@ router.get('/new', ( req, res ) => {
 }); 
 
 // route to post a new book to the database
-router.post('/new', asyncHandler( async( req, res ) => {
+router.post('/', asyncHandler( async( req, res ) => {
     // pass book object from form into variable
         // create new book with book object from form
     const newBook = req.body;
@@ -38,18 +38,54 @@ router.post('/new', asyncHandler( async( req, res ) => {
 }));
 
 // route to show book detail 
-router.get('/:id', ( req, res ) => {
-    res.send('Book ID');
-});
+router.get('/:id', asyncHandler( async( req, res ) => {
+    // find book with id in URL and pass to template
+        // render update book template if there is a book with the id in the URL
+    const bookId = req.params.id;
+    const book = await Book.findByPk(bookId);
+    if(book) {
+        res.render('update-book', { book });
+    } else {
+        res.sendStatus(404);
+    }
+
+}));
 
 // route to update book
-router.post('/:id', ( req, res ) => {
-    // post book
-})
+router.post('/:id', asyncHandler( async( req, res ) => {
+    // find book using ID from URL
+    const bookId = req.params.id;
+    const updatedBook = req.body;
+    const book = await Book.findByPk(bookId);
+
+    try {
+        // if book exists, update book and redirect to home page
+        if(book) {
+            await book.update(updatedBook);
+            res.redirect('/books');
+        } else {
+            res.sendStatus(404);
+        }
+    } catch(error) {
+        console.error("Error: ", error);
+    }
+
+}));
+
 
 // route to delete book
-router.get('/:id/delete', ( req, res ) => {
-    
-});
+router.post('/:id/delete', asyncHandler( async( req, res ) => {
+    // find book using ID from URL
+    const bookId = req.params.id;
+    const book = await Book.findByPk(bookId);
+
+    // if book exists, then delete 
+    if(book) {
+        await book.destroy();
+        res.redirect('/books');
+    } else {
+        res.sendStatus(404);
+    }
+}));
 
 module.exports = router;
