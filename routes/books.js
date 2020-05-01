@@ -19,12 +19,12 @@ router.get('/', asyncHandler( async( req, res ) => {
     const books = await Book.findAll({
         order: [['title', 'ASC']]
     });
-    res.render('index', { books });
+    res.render('index', { books, title: 'Books' });
 }));
 
 // route to create book form
 router.get('/new', ( req, res ) => {
-    res.render('new-book');
+    res.render('new-book', { title: 'New Book' });
 }); 
 
 // route to post a new book to the database
@@ -56,7 +56,7 @@ router.get('/:id', asyncHandler( async( req, res ) => {
     const book = await Book.findByPk(bookId);
     
     if(book) {
-        res.render('update-book', { book });
+        res.render('update-book', { book, title: book.title });
     } else {
         res.sendStatus(404);
     }
