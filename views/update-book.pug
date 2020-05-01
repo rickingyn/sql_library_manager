@@ -4,6 +4,13 @@ extends layout.pug
 block content
     body
         h1 Update Book
+
+            //- Show message if there is a validation error
+        if errors
+            h2(class='error') Oops an error occured!
+            each error in errors
+                p(class='error') #{ error.message }
+                
         //- form submits to POST route to update book
         form(action=`/books/${book.id}` method='post')
             p 

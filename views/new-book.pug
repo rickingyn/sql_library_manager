@@ -2,6 +2,14 @@ extends layout.pug
 
 block content  
     h1 New Book
+    
+    //- Show message if there is a validation error
+    if errors
+        h2(class='error') Oooops!
+        ul
+            each error in errors
+                li(class='error') #{ error.message }
+
     br
     br
     //- post form to /books/new route to create new book

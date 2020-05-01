@@ -30,11 +30,22 @@ router.get('/new', ( req, res ) => {
 // route to post a new book to the database
 router.post('/', asyncHandler( async( req, res ) => {
     // pass book object from form into variable
-        // create new book with book object from form
     const newBook = req.body;
-    await Book.create(newBook);
+    let book;
 
-    res.redirect(`/books`);
+    // try - create new book
+        // catch - render form with error message if there is a validation error
+    try {
+        book = await Book.create(newBook);
+        res.redirect(`/books`);
+    } catch(error) {
+        if(error.name === "SequelizeValidationError") {
+            book = await Book.build(newBook);
+            res.render('new-book', { book, errors: error.errors });
+        } else {
+            throw error;
+        }
+    }
 }));
 
 // route to show book detail 
@@ -43,22 +54,25 @@ router.get('/:id', asyncHandler( async( req, res ) => {
         // render update book template if there is a book with the id in the URL
     const bookId = req.params.id;
     const book = await Book.findByPk(bookId);
+    
     if(book) {
         res.render('update-book', { book });
     } else {
         res.sendStatus(404);
     }
-
 }));
 
 // route to update book
 router.post('/:id', asyncHandler( async( req, res ) => {
-    // find book using ID from URL
+    // save book id and form values to variables
     const bookId = req.params.id;
     const updatedBook = req.body;
-    const book = await Book.findByPk(bookId);
+    let book;
 
+    // try - updating book with value from from
+        // catch - show error message if there is a validation error
     try {
+        book = await Book.findByPk(bookId);
         // if book exists, update book and redirect to home page
         if(book) {
             await book.update(updatedBook);
@@ -67,9 +81,13 @@ router.post('/:id', asyncHandler( async( req, res ) => {
             res.sendStatus(404);
         }
     } catch(error) {
-        console.error("Error: ", error);
+        if(error.name === "SequelizeValidationError") {
+            book = await Book.build(updatedBook);
+            res.render('update-book', { book, errors: error.errors });
+        } else {
+            throw error;
+        }
     }
-
 }));
 
 
