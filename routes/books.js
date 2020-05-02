@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express();
 const Book = require('../models').Book;
+//require Sequelize's operator 
+const { Op } = require('sequelize');
 
 // Handler function to wrap each route
 function asyncHandler(cb) {
@@ -15,11 +17,53 @@ function asyncHandler(cb) {
 
 // route to show full list of books
 router.get('/', asyncHandler( async( req, res ) => {
-    // use sequelize's findAll method to return all books and pass to index template
-    const books = await Book.findAll({
-        order: [['title', 'ASC']]
-    });
+    // pass URL search query into variable;
+        // if search is not empty, render index view with searched book
+        // else, render all books
+    const { search } = req.query;
+    let books;
+
+    if(search) {
+        // use Sequelize's operator 'Op' to search for books 
+            // use LIKE operator to search title, author, genre, or year attributes if it contains search text
+        books = await Book.findAll({
+            where: {
+                [Op.or]: [
+                    {
+                        title: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        author: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        genre: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        year: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    }
+                ]
+            },
+            order: [['title', 'ASC']]
+        });
+    } else {
+        // use sequelize's findAll method to return all books and pass to index template
+        books = await Book.findAll({
+            order: [['title', 'ASC']]
+        });
+    }
     res.render('index', { books, title: 'Books' });
+}));
+
+router.get('/results', asyncHandler( async( req, res ) => {
+    res.render('index');
 }));
 
 // route to create book form
@@ -28,7 +72,7 @@ router.get('/new', ( req, res ) => {
 }); 
 
 // route to post a new book to the database
-router.post('/', asyncHandler( async( req, res ) => {
+router.post('/new', asyncHandler( async( req, res ) => {
     // pass book object from form into variable
     const newBook = req.body;
     let book;
@@ -93,7 +137,6 @@ router.post('/:id', asyncHandler( async( req, res ) => {
         }
     }
 }));
-
 
 // route to delete book
 router.post('/:id/delete', asyncHandler( async( req, res ) => {

@@ -8,6 +8,13 @@ block content
     a(class='button' href='/books/new') Create New Book
     br
     br
+    br
+    br
+    
+    //- search form
+    form(action='/books' method='get')
+        input(type="text" name='search' placeholder='Search Library')
+        input(type="submit" value='Search')
     table
         thead
             tr
