@@ -58,7 +58,9 @@ router.get('/:id', asyncHandler( async( req, res ) => {
     if(book) {
         res.render('update-book', { book, title: book.title });
     } else {
-        res.sendStatus(404);
+        // render error page and log error message in console if id is not found
+        console.log("An error has occurred in the server.");
+        res.render('error', { title: 'Page Not Found' });
     }
 }));
 
@@ -78,7 +80,9 @@ router.post('/:id', asyncHandler( async( req, res ) => {
             await book.update(updatedBook);
             res.redirect('/books');
         } else {
-            res.sendStatus(404);
+            // render error page and log error message in console if id is not found
+            console.log("An error has occurred in the server.");
+            res.render('error', { title: 'Page Not Found' });
         }
     } catch(error) {
         if(error.name === "SequelizeValidationError") {
@@ -102,7 +106,9 @@ router.post('/:id/delete', asyncHandler( async( req, res ) => {
         await book.destroy();
         res.redirect('/books');
     } else {
-        res.sendStatus(404);
+        // render error page and log error message in console if id is not found
+        console.log("An error has occurred in the server.");
+        res.render('error', { title: 'Page Not Found' });
     }
 }));
 
