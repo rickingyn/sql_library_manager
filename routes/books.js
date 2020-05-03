@@ -18,8 +18,7 @@ function asyncHandler(cb) {
 // route to show full list of books
 router.get('/', asyncHandler( async( req, res ) => {
     // pass URL search and page query into variable;
-        // if search is not empty, render index view with searched book
-        // else, render all books
+    // set other variables to be used in index template
     const { search, page } = req.query;
     let books;
     let totalBooks;
@@ -28,10 +27,13 @@ router.get('/', asyncHandler( async( req, res ) => {
     let totalPages;
     let limit = 5;
     let offset = limit * ( page - 1 ) || 0;
-
+    
+    // if search is not empty, render index view with searched book
+    // else, render all books
     if(search) {
         // use Sequelize's operator 'Op' to search for books 
             // use LIKE operator to search title, author, genre, or year attributes if it contains search text
+        // set limit and offset atribute for pagination
         books = await Book.findAll({
             where: {
                 [Op.or]: [
@@ -91,23 +93,24 @@ router.get('/', asyncHandler( async( req, res ) => {
             }
         })).length;
 
+        // set total pages to be total books / limit, rounded up
         totalPages = Math.ceil(totalBooks/5);
     } else {
         // use sequelize's findAll method to return all books and pass to index template
+        // set limit and offset attribute for pagination
         books = await Book.findAll({
             limit: `${ limit }`,
             offset: `${ offset }`,
             order: [['title', 'ASC']]
         });
 
+        // set totalBooks and totalPages variable
         totalBooks = (await Book.findAll()).length;
         totalPages = Math.ceil(totalBooks/5);
     } 
-    res.render('index', { search, books, totalBooks, page, totalPages, title: 'Books' });
-}));
 
-router.get('/results', asyncHandler( async( req, res ) => {
-    res.render('index');
+    // render index view and pass down variables
+    res.render('index', { search, books, totalBooks, page, totalPages, title: 'Books' });
 }));
 
 // route to create book form

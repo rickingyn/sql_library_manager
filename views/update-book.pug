@@ -1,11 +1,11 @@
-//- boilerplate markup
+//- inherit layout template
 extends layout.pug
 
 block content
     body
         h1 Update Book
 
-            //- Show message if there is a validation error
+        //- Show message if there is a validation error
         if errors
             h2(class='error') Oops an error occured!
             each error in errors
@@ -27,6 +27,7 @@ block content
                 input(type="text" name='year' id='year' value=`${ book.year }`)
             p
                 input(type="submit" value='Update Book')
+                
         //- form to cancel or delete book
         form(action=`/books/${book.id}/delete` method='post')
             p

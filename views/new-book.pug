@@ -1,3 +1,4 @@
+//- inherit layout template
 extends layout.pug
 
 block content  
@@ -9,9 +10,9 @@ block content
         ul
             each error in errors
                 li(class='error') #{ error.message }
+    br
+    br
 
-    br
-    br
     //- post form to /books/new route to create new book
     form(action="/books/new" method='POST')
         p

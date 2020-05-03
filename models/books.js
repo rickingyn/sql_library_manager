@@ -2,6 +2,9 @@
 
 const Sequelize = require('sequelize');
 
+// create Book Model with Sequelize
+    // define book fields
+    // validation to title and author field; must not be empty or null
 module.exports = (sequelize) => {
     class Book extends Sequelize.Model { }
     Book.init({

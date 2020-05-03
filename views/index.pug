@@ -1,4 +1,4 @@
-//- boilerplate markup
+//- inherit layout template
 extends layout.pug
 
 block content
@@ -16,6 +16,8 @@ block content
     form(action='/books' method='get')
         input(type="text" name='search' placeholder='Search Library')
         input(type="submit" value='Search')
+
+    //- create table and display list of books
     table
         thead
             tr
@@ -33,9 +35,10 @@ block content
                     td #{ book.genre }
                     td #{ book.year }
 
-    //- pagination
+    //- display total results returned
     p Total Reults: #{ totalBooks }
 
+    //- PAGINATION
     //- set url for pagination based on if there is a search query; allow pagination to work in search list as well
     - let url;
     if(search)
