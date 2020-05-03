@@ -95,3 +95,16 @@ input[type=text] {
 .error {
   color: rgb(236, 15, 15);
 }
+
+/* custom CSS for pagination*/
+.active {
+  text-shadow: 0.5px 0.5px 1px black;
+  color: black;
+  font-weight: bold;
+}
+
+.page-number:hover {
+  text-shadow: 0.5px 0.5px 1px black;
+  color: black;
+  font-weight: bold;
+}

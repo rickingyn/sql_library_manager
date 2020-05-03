@@ -17,11 +17,17 @@ function asyncHandler(cb) {
 
 // route to show full list of books
 router.get('/', asyncHandler( async( req, res ) => {
-    // pass URL search query into variable;
+    // pass URL search and page query into variable;
         // if search is not empty, render index view with searched book
         // else, render all books
-    const { search } = req.query;
+    const { search, page } = req.query;
     let books;
+    let totalBooks;
+    
+    // variables for pagination
+    let totalPages;
+    let limit = 5;
+    let offset = limit * ( page - 1 ) || 0;
 
     if(search) {
         // use Sequelize's operator 'Op' to search for books 
@@ -51,15 +57,53 @@ router.get('/', asyncHandler( async( req, res ) => {
                     }
                 ]
             },
+            limit: `${ limit }`, 
+            offset: `${ offset }`, 
             order: [['title', 'ASC']]
         });
+
+        // find total number of results
+            // length of books result without limit
+        totalBooks = (await Book.findAll({
+            where: {
+                [Op.or]: [
+                    {
+                        title: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        author: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        genre: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    },
+                    {
+                        year: {
+                            [Op.like]: `%${ search }%`
+                        }
+                    }
+                ]
+            }
+        })).length;
+
+        totalPages = Math.ceil(totalBooks/5);
     } else {
         // use sequelize's findAll method to return all books and pass to index template
         books = await Book.findAll({
+            limit: `${ limit }`,
+            offset: `${ offset }`,
             order: [['title', 'ASC']]
         });
-    }
-    res.render('index', { books, title: 'Books' });
+
+        totalBooks = (await Book.findAll()).length;
+        totalPages = Math.ceil(totalBooks/5);
+    } 
+    res.render('index', { search, books, totalBooks, page, totalPages, title: 'Books' });
 }));
 
 router.get('/results', asyncHandler( async( req, res ) => {
