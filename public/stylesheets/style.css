@@ -1,6 +1,10 @@
 body {
   padding: 10px 50px 50px;
   font: 18px "Garamond", serif;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  
 }
 
 a {
@@ -22,6 +26,7 @@ a.button, input[type=submit] {
   font-size: 14px;
   border-radius: 2px;
   cursor: pointer;
+  width: 120px;
 }
 
 form a.button, input[type=submit] {
